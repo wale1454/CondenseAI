@@ -4,8 +4,6 @@ import os
 from flask import Flask, redirect, render_template, request, url_for
 
 app = Flask(__name__)
-# openai.api_key = "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"
-
 
 
 from goose3 import Goose
