@@ -26,7 +26,9 @@ def index():
 
         # Summary
         articleBody2 = articleBody.replace("\n", " ")
-        apiKey = 'INSERT-API-KEY'
+        apiKey = os.getenv('COHERE_APIKEY', 'default_value')
+
+#         apiKey = 'INSERT-API-KEY'
 
         co = cohere.Client(apiKey)
 
