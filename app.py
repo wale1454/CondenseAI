@@ -33,6 +33,8 @@ def index():
 
         response = co.summarize( 
             text = articleBody,
+            format='paragraph',
+            temperature=0.4,
             model='summarize-xlarge', 
             length='long',
             extractiveness='medium'
