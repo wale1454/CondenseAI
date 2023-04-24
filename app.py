@@ -45,6 +45,6 @@ def index():
                 
 
     # Renders the HTML template with the article name and summary included.
-    return render_template("index.html", result=articleName, result5 =summary)     
+    return render_template("index.html", result=articleName, result5 =summary, fullArticle= articleBody )     
 
 

@@ -7,10 +7,34 @@
   />
   <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
   <!-- <link rel="stylesheet" href="main.css"> -->
+
+  <style>
+
+    @media only screen and (max-width: 600px) {
+      body {
+        font-size: 14px;
+      }
+      .icon {
+        width: 50%;
+      }
+      h3 {
+        font-size: 20px;
+      }
+      input[type="text"], input[type="submit"] {
+        width: 100%;
+        margin: 10px 0;
+      }
+      .result {
+        font-size: 16px;
+        margin: 10px 0;
+      }
+    }
+    
+  </style>
 </head>
 
 <body>
-  <img src="{{ url_for('static', filename='dog.png') }}" class="icon" />
+  <img src="{{ url_for('static', filename='ai.png') }}" class="icon" />
   <h3>SummarizeAI </h3>
   <h4> AI article summaries for the curious mind </h4>
 
@@ -31,5 +55,20 @@
   <div> <h1 class="Summary" > Summary</h1> </div>
   <div class="result output ">{{ result5 }}</div>
   {% endif %}
+
+  <br>
+  <br>
+  <br>
+
+{% if fullArticle %}
+  <div> <h1 class="Summary" > Original Article</h1> </div>
+
+  <div class="result output ">
+    {% for line in fullArticle.split('\n') %}
+      <p>{{ line }}</p>
+    {% endfor %}
+  </div>
+{% endif %}
+
 
 </body>
