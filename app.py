@@ -14,6 +14,8 @@ def index():
     # Initialize variables for the article name and summary
     articleName = None
     summary = None
+    articleBody = None
+
 
     if request.method == "POST":
         urll = request.form["animal"]
