@@ -39,7 +39,7 @@ def index():
             temperature=0.4,
             model='summarize-xlarge', 
             length='long',
-            extractiveness='medium'
+            temperature=0.4,
         )
 
         # Store the summary in the summary variable
