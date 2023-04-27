@@ -1,6 +1,6 @@
-# SummarizeAI
+# CondenseAI
 
  
--> [SummarizeAI](https://summarizeai-2gs8.onrender.com)
+-> [CondenseAI](https://condenseai.com.ng/)
 
-SummarizeAI is a news summarizer web app. Simply enter an article URL and get a quick and accurate summary. Stay informed without the time commitment.
+CondenseAI is a news summarizer web app. Simply enter an article URL and get a quick and accurate summary. Stay informed without the time commitment.
