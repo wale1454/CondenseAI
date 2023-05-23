@@ -6,6 +6,13 @@ import cohere
 
 app = Flask(__name__)
 
+
+@app.after_request
+def add_cors_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept'
+    return response
+
 # Define the endpoint for the root URL path ("/")
 @app.route("/", methods=("GET", "POST"))
 def index():
