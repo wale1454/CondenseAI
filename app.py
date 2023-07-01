@@ -43,12 +43,10 @@ def add_cors_header(response):
 def index():
     
     # Initialize variables for the article name and summary
-    articleName = None
-    summary = None
-    articleBody = None
+    articleName, summary, articleBody = None, None, None 
 
     if request.method == "POST":
-        articleUrl = request.form["animal"]
+        articleUrl = request.form["article_Url"]
         
         # Use Goose to extract article information from the URL
         g = Goose()
@@ -95,8 +93,6 @@ def process_text():
     articleName = article.title
     articleBody = article.cleaned_text
 
-    number = 42
-
     # Use the Cohere API to summarize the article
     apiKey = os.getenv('COHERE_APIKEY', 'default_value')
     co = cohere.Client(apiKey)
@@ -111,12 +107,17 @@ def process_text():
 
     # Store the summary in the summary variable
     summary = response.summary
-         
-    gh = { "Summary": summary,
-
-          "Title":articleName, 
-          "result":number,
+    json_result = { "Summary": summary,
+                    "Title":articleName
         }
 
-    return jsonify(gh)
+    # Store URL and title in the DB
+    conn = connect_to_db()
+    cursor = conn.cursor()
+    cursor.execute(f"INSERT INTO condense_chromex (article_title, article_url) VALUES('{articleName}', '{articleUrl}') ; ")
+    
+    conn.commit() # Used after Insert to persist the insert query.
+    conn.close()
+
+    return jsonify(json_result)
 
