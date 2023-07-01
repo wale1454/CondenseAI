@@ -114,7 +114,7 @@ def process_text():
     # Store URL and title in the DB
     conn = connect_to_db()
     cursor = conn.cursor()
-    cursor.execute(f"INSERT INTO condense_chromex (article_title, article_url) VALUES('{articleName}', '{articleUrl}') ; ")
+    cursor.execute(f"INSERT INTO condense_chromex (article_title, article_url) VALUES('{articleName}', '{articleURL}') ; ")
     
     conn.commit() # Used after Insert to persist the insert query.
     conn.close()
