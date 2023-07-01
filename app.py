@@ -3,9 +3,34 @@ import os
 from flask import Flask, redirect, render_template, request, url_for, jsonify
 from goose3 import Goose
 import cohere
+import psycopg2
 
 app = Flask(__name__)
 
+# Postgres DB Setup
+PostgresHost = os.getenv('PostgresHost', 'default_value')
+PostgresDB = os.getenv('PostgresDB', 'default_value')
+PostgresUser = os.getenv('PostgresUser', 'default_value')
+PostgresPassword = os.getenv('PostgresPassword', 'default_value')
+
+app.config['POSTGRES_HOST'] = PostgresHost
+app.config['POSTGRES_PORT'] = '5432'
+app.config['POSTGRES_DB'] = PostgresDB
+app.config['POSTGRES_USER'] = PostgresUser
+app.config['POSTGRES_PASSWORD'] = PostgresPassword
+
+# Establish a connection to the Postgres DB 
+def connect_to_db():
+    conn = psycopg2.connect(
+        host=app.config['POSTGRES_HOST'],
+        port=app.config['POSTGRES_PORT'],
+        database=app.config['POSTGRES_DB'],
+        user=app.config['POSTGRES_USER'],
+        password=app.config['POSTGRES_PASSWORD']
+    )
+    return conn
+
+# 
 
 @app.after_request
 def add_cors_header(response):
@@ -16,24 +41,22 @@ def add_cors_header(response):
 # Define the endpoint for the root URL path ("/")
 @app.route("/", methods=("GET", "POST"))
 def index():
-
+    
     # Initialize variables for the article name and summary
     articleName = None
     summary = None
     articleBody = None
 
-
     if request.method == "POST":
-        urll = request.form["animal"]
-
+        articleUrl = request.form["animal"]
+        
         # Use Goose to extract article information from the URL
         g = Goose()
-        article = g.extract(url=urll)
+        article = g.extract(url=articleUrl)
 
         # Extract the article name and body
         articleName = article.title
         articleBody = article.cleaned_text
-
         
         # Use the Cohere API to summarize the article
         apiKey = os.getenv('COHERE_APIKEY', 'default_value')
@@ -49,6 +72,14 @@ def index():
 
         # Store the summary in the summary variable
         summary = response.summary
+        
+        # Store URL and title in the DB
+        conn = connect_to_db()
+        cursor = conn.cursor()
+        cursor.execute(f"INSERT INTO condense_live (article_title, article_url) VALUES('{articleName}', '{articleUrl}') ; ")
+        
+        conn.commit() # Used after Insert to persist the insert query.
+        conn.close()
                
     # Renders the HTML template with the article name and summary included.
     return render_template("index.html", result=articleName, result5 =summary, fullArticle= articleBody )     
