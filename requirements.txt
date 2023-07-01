@@ -25,3 +25,5 @@ toml==0.10.2
 tqdm==4.62.3
 urllib3==1.26.7
 Werkzeug==2.0.2
+psycopg==3.1.9
+psycopg2-binary==2.9.3
