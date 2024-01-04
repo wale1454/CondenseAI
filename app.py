@@ -21,16 +21,20 @@ app.config['POSTGRES_PASSWORD'] = PostgresPassword
 
 # Establish a connection to the Postgres DB 
 def connect_to_db():
-    conn = psycopg2.connect(
-        host=app.config['POSTGRES_HOST'],
-        port=app.config['POSTGRES_PORT'],
-        database=app.config['POSTGRES_DB'],
-        user=app.config['POSTGRES_USER'],
-        password=app.config['POSTGRES_PASSWORD']
-    )
-    return conn
 
-# 
+    try:
+        conn = psycopg2.connect(
+            host=app.config['POSTGRES_HOST'],
+            port=app.config['POSTGRES_PORT'],
+            database=app.config['POSTGRES_DB'],
+            user=app.config['POSTGRES_USER'],
+            password=app.config['POSTGRES_PASSWORD']
+        )
+        return conn
+
+    except Exception as e :
+        print("Error from connecting to DB: ", e)
+    
 
 @app.after_request
 def add_cors_header(response):
@@ -57,7 +61,10 @@ def index():
         articleBody = article.cleaned_text
         
         # Use the Cohere API to summarize the article
-        apiKey = os.getenv('COHERE_APIKEY', 'default_value')
+        # apiKey = os.getenv('COHERE_APIKEY', 'default_value')
+        apiKey = "o8FAf6vdwLTAHOLSvWUIta7mvcOnqkIQ5Z8zVSxs"
+
+        
         co = cohere.Client(apiKey)
 
         response = co.summarize( 
@@ -71,13 +78,18 @@ def index():
         # Store the summary in the summary variable
         summary = response.summary
         
+
+        try:
         # Store URL and title in the DB
-        conn = connect_to_db()
-        cursor = conn.cursor()
-        cursor.execute(f"INSERT INTO condense_live (article_title, article_url) VALUES('{articleName}', '{articleUrl}') ; ")
-        
-        conn.commit() # Used after Insert to persist the insert query.
-        conn.close()
+            conn = connect_to_db()
+            cursor = conn.cursor()
+            cursor.execute(f"INSERT INTO condense_live (article_title, article_url) VALUES('{articleName}', '{articleUrl}') ; ")
+            
+            conn.commit() # Used after Insert to persist the insert query.
+            conn.close()
+        except Exception as e:
+            print("Error from inserting into DB", e)
+
                
     # Renders the HTML template with the article name and summary included.
     return render_template("index.html", result=articleName, result5 =summary, fullArticle= articleBody )     
